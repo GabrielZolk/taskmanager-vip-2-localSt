@@ -5,6 +5,8 @@
       <input
         type="text"
         placeholder="Search Tasks..."
+        v-model="searchQuery"
+        @input="sendInputState"
       />
       <svg
         class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1l05muc"
@@ -20,25 +22,29 @@
     </div>
     <div class="filter">
       <label>All</label>
-      <input type="radio" name="task-status" />
+      <input type="radio" value="all" name="task-status" v-model="radioValue" @change="handleRadioChange('all')"/>
       <label>Completed</label>
-      <input type="radio" name="task-status" />
+      <input type="radio" value="completed" name="task-status" v-model="radioValue" @change="handleRadioChange('completed')"/>
       <label>Incomplete</label>
-      <input type="radio" name="task-status" />
+      <input type="radio" value="incomplete" name="task-status" v-model="radioValue" @change="handleRadioChange('incomplete')" />
     </div>
   </header>
 </template>
 
 <script setup>
-// import { ref } from "vue";
+import { ref } from 'vue'
+import { useStore } from 'vuex'
 
-// const query = ref("");
+const store = useStore();
+const searchQuery = ref('');
+const radioValue = ref('all');
+function sendInputState() {
+  store.commit('setSearchQuery', searchQuery.value);
+}
 
-// const emit = defineEmits(["query"]);
-// function emitQuery() {
-//   emit("query", query.value);
-// }
-
+function handleRadioChange(newValue) {
+  store.commit('setRadioValue', newValue);
+}
 </script>
 
 

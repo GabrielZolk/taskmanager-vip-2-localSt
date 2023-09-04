@@ -11,7 +11,7 @@
         <button @click="addTask">ADD TASK</button>
       </div>
       <div class="tasks">
-        <div v-for="task in tasks" :key="task.id" class="task" :class="{ 'done': task.completed }">
+        <div v-for="task in filteredTasks" :key="task.id" class="task" :class="{ 'done': task.completed }">
           <div>
             <p>{{ task.name }}</p>
             <span>Criado em {{ task.created }}</span>
@@ -40,7 +40,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const formatDate = (timestamp) => {
   const data = new Date(timestamp);
@@ -104,6 +107,23 @@ function deleteTask(task) {
     tasks.value.splice(index, 1);
     localStorage.setItem("tasks", JSON.stringify(tasks.value));
 }
+
+const filteredTasks = computed(() => {
+    const query = store.state.searchQuery;
+    const filter = store.state.radioValue;
+
+    if(tasks.value && query) {
+      return tasks.value.filter((task) => task.name.includes(query))
+    }
+
+    if(filter === 'all') {
+      return tasks.value;
+    } else if (filter === 'completed') {
+      return tasks.value.filter((task) => task.completed === true);
+    } else {
+      return tasks.value.filter((task) => task.completed === false);
+    }
+});
 </script>
 
 <style scoped>
